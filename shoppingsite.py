@@ -6,7 +6,7 @@ put melons in a shopping cart.
 Authors: Joel Burton, Christian Fernandez, Meggie Mahnken, Katie Byers.
 """
 
-from flask import Flask, render_template, redirect, flash
+from flask import Flask, session, render_template, redirect, flash
 import jinja2
 
 import melons
@@ -65,9 +65,31 @@ def show_shopping_cart():
     # The logic here will be something like:
     #
     # - get the cart dictionary from the session
+
+    shopping_cart = session['cart']
+
     # - create a list to hold melon objects and a variable to hold the total
     #   cost of the order
+    
+    melon_objects = []
+    total_cost = 0.00
+ 
+    #total_cost = shopping_cart[]
+    
     # - loop over the cart dictionary, and for each melon id:
+    for fruit in shopping_cart:
+        melon_to_buy = melons.get_by_id(fruit)
+        print(melon_to_buy, '*********************************************************')
+        melon_objects.append(melon_to_buy)
+        print(melon_objects, '*********************************************************')
+        cost_for_melons = melon_to_buy.price * shopping_cart[fruit]
+        print(cost_for_melons, '*********************************************************')
+        total_cost = total_cost + cost_for_melons
+        print(total_cost, '*********************************************************')
+
+
+
+
     #    - get the corresponding Melon object
     #    - compute the total cost for that type of melon
     #    - add this to the order total
@@ -78,7 +100,7 @@ def show_shopping_cart():
     # Make sure your function can also handle the case wherein no cart has
     # been added to the session
 
-    return render_template("cart.html")
+    return render_template("cart.html", melon_objects, total_cost)
 
 
 @app.route("/add_to_cart/<melon_id>")
@@ -101,16 +123,19 @@ def add_to_cart(melon_id):
     # - redirect the user to the cart page
 
     if session.get('cart') is None:
-        session['cart'] = {[melon_id] = 1}
+        session['cart'] = {melon_id: 1}
+            
+        
+        #print(session, '*********************')
     else:
-        if melon_id in session[cart]:
-            cart[melon_id] += 1
+        if melon_id in session['cart']:
+            session['cart'][melon_id] += 1
         else:
-            melon_id in session[cart]:
-            cart[melon_id] = 1
+            session['cart'][melon_id] = 1 
+    
+    
 
-
-    return "Oops! This needs to be implemented!"
+    return redirect("/cart")
 
 
 @app.route("/login", methods=["GET"])
