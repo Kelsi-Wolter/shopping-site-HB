@@ -100,6 +100,16 @@ def add_to_cart(melon_id):
     # - flash a success message
     # - redirect the user to the cart page
 
+    if session.get('cart') is None:
+        session['cart'] = {[melon_id] = 1}
+    else:
+        if melon_id in session[cart]:
+            cart[melon_id] += 1
+        else:
+            melon_id in session[cart]:
+            cart[melon_id] = 1
+
+
     return "Oops! This needs to be implemented!"
 
 
